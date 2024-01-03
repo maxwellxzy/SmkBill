@@ -1,0 +1,4 @@
+pay:
+  path:
+    download: /var/pay/download/
+    cert: /var/pay/cert/

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.pay.mapper.PayTradeTypeMapper">
+    
+    <resultMap type="PayTradeType" id="PayTradeTypeResult">
+        <result property="id"    column="id"    />
+        <result property="tradeType"    column="trade_type"    />
+        <result property="tradeTypeName"    column="trade_type_name"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectPayTradeTypeVo">
+        select id, trade_type, trade_type_name, remark from pay_trade_type
+    </sql>
+
+    <select id="selectPayTradeTypeList" parameterType="PayTradeType" resultMap="PayTradeTypeResult">
+        <include refid="selectPayTradeTypeVo"/>
+        <where>  
+            <if test="tradeType != null  and tradeType != ''"> and trade_type = #{tradeType}</if>
+            <if test="tradeTypeName != null  and tradeTypeName != ''"> and trade_type_name like concat('%', #{tradeTypeName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectPayTradeTypeById" parameterType="Long" resultMap="PayTradeTypeResult">
+        <include refid="selectPayTradeTypeVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertPayTradeType" parameterType="PayTradeType" useGeneratedKeys="true" keyProperty="id">
+        insert into pay_trade_type
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tradeType != null">trade_type,</if>
+            <if test="tradeTypeName != null">trade_type_name,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tradeType != null">#{tradeType},</if>
+            <if test="tradeTypeName != null">#{tradeTypeName},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePayTradeType" parameterType="PayTradeType">
+        update pay_trade_type
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tradeType != null">trade_type = #{tradeType},</if>
+            <if test="tradeTypeName != null">trade_type_name = #{tradeTypeName},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePayTradeTypeById" parameterType="Long">
+        delete from pay_trade_type where id = #{id}
+    </delete>
+
+    <delete id="deletePayTradeTypeByIds" parameterType="String">
+        delete from pay_trade_type where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

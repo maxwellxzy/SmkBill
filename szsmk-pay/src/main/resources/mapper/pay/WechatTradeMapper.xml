@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.pay.mapper.WechatTradeMapper">
+    
+    <resultMap type="WechatTrade" id="WechatTradeResult">
+        <result property="columnId"    column="column_id"    />
+        <result property="tradeTime"    column="trade_time"    />
+        <result property="mpId"    column="mp_id"    />
+        <result property="mchId"    column="mch_id"    />
+        <result property="vipMchId"    column="vip_mch_id"    />
+        <result property="terminalId"    column="terminal_id"    />
+        <result property="wechatTradeNo"    column="wechat_trade_no"    />
+        <result property="mchTradeNo"    column="mch_trade_no"    />
+        <result property="userId"    column="user_id"    />
+        <result property="tradeType"    column="trade_type"    />
+        <result property="tradeStatus"    column="trade_status"    />
+        <result property="payBank"    column="pay_bank"    />
+        <result property="currencyType"    column="currency_type"    />
+        <result property="tradePayable"    column="trade_payable"    />
+        <result property="couponPrice"    column="coupon_price"    />
+        <result property="wechatRefundNo"    column="wechat_refund_no"    />
+        <result property="mchRefundNo"    column="mch_refund_no"    />
+        <result property="refundPrice"    column="refund_price"    />
+        <result property="couponRefundPrice"    column="coupon_refund_price"    />
+        <result property="refundType"    column="refund_type"    />
+        <result property="refundStatus"    column="refund_status"    />
+        <result property="goodsName"    column="goods_name"    />
+        <result property="mchDataPackage"    column="mch_data_package"    />
+        <result property="serviceFee"    column="service_fee"    />
+        <result property="serviceRate"    column="service_rate"    />
+        <result property="tradePrice"    column="trade_price"    />
+        <result property="requestRefund"    column="request_refund"    />
+        <result property="rateRemark"    column="rate_remark"    />
+    </resultMap>
+
+    <sql id="selectWechatTradeVo">
+        select column_id, trade_time, mp_id, mch_id, vip_mch_id, terminal_id, wechat_trade_no, mch_trade_no, user_id, trade_type, trade_status, pay_bank, currency_type, trade_payable, coupon_price, wechat_refund_no, mch_refund_no, refund_price, coupon_refund_price, refund_type, refund_status, goods_name, mch_data_package, service_fee, service_rate, trade_price, request_refund, rate_remark from wechat_trade
+    </sql>
+
+    <select id="selectWechatTradeList" parameterType="WechatTrade" resultMap="WechatTradeResult">
+        <include refid="selectWechatTradeVo"/>
+        <where>  
+            <if test="tradeTime != null "> and date(trade_time) = #{tradeTime}</if>
+            <if test="mpId != null  and mpId != ''"> and mp_id = #{mpId}</if>
+            <if test="mchId != null  and mchId != ''"> and mch_id = #{mchId}</if>
+            <if test="vipMchId != null  and vipMchId != ''"> and vip_mch_id = #{vipMchId}</if>
+            <if test="terminalId != null  and terminalId != ''"> and terminal_id = #{terminalId}</if>
+            <if test="wechatTradeNo != null  and wechatTradeNo != ''"> and wechat_trade_no = #{wechatTradeNo}</if>
+            <if test="mchTradeNo != null  and mchTradeNo != ''"> and mch_trade_no like concat(#{mchTradeNo},'%') </if>
+            <if test="userId != null  and userId != ''"> and user_id = #{userId}</if>
+            <if test="tradeType != null  and tradeType != ''"> and trade_type = #{tradeType}</if>
+            <if test="tradeStatus != null  and tradeStatus != ''"> and trade_status = #{tradeStatus}</if>
+            <if test="payBank != null  and payBank != ''"> and pay_bank = #{payBank}</if>
+            <if test="currencyType != null  and currencyType != ''"> and currency_type = #{currencyType}</if>
+            <if test="tradePayable != null "> and trade_payable = #{tradePayable}</if>
+            <if test="couponPrice != null "> and coupon_price = #{couponPrice}</if>
+            <if test="wechatRefundNo != null  and wechatRefundNo != ''"> and wechat_refund_no = #{wechatRefundNo}</if>
+            <if test="mchRefundNo != null  and mchRefundNo != ''"> and mch_refund_no = #{mchRefundNo}</if>
+            <if test="refundPrice != null "> and refund_price = #{refundPrice}</if>
+            <if test="couponRefundPrice != null "> and coupon_refund_price = #{couponRefundPrice}</if>
+            <if test="refundType != null  and refundType != ''"> and refund_type = #{refundType}</if>
+            <if test="refundStatus != null  and refundStatus != ''"> and refund_status = #{refundStatus}</if>
+            <if test="goodsName != null  and goodsName != ''"> and goods_name like concat('%', #{goodsName}, '%')</if>
+            <if test="mchDataPackage != null  and mchDataPackage != ''"> and mch_data_package = #{mchDataPackage}</if>
+            <if test="serviceFee != null "> and service_fee = #{serviceFee}</if>
+            <if test="serviceRate != null "> and service_rate = #{serviceRate}</if>
+            <if test="tradePrice != null "> and trade_price = #{tradePrice}</if>
+            <if test="requestRefund != null "> and request_refund = #{requestRefund}</if>
+            <if test="rateRemark != null  and rateRemark != ''"> and rate_remark = #{rateRemark}</if>
+        </where>
+    </select>
+    
+    <select id="selectWechatTradeByColumnId" parameterType="Long" resultMap="WechatTradeResult">
+        <include refid="selectWechatTradeVo"/>
+        where column_id = #{columnId}
+    </select>
+        
+    <insert id="insertWechatTrade" parameterType="WechatTrade" useGeneratedKeys="true" keyProperty="columnId">
+        insert into wechat_trade
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tradeTime != null">trade_time,</if>
+            <if test="mpId != null">mp_id,</if>
+            <if test="mchId != null">mch_id,</if>
+            <if test="vipMchId != null">vip_mch_id,</if>
+            <if test="terminalId != null">terminal_id,</if>
+            <if test="wechatTradeNo != null">wechat_trade_no,</if>
+            <if test="mchTradeNo != null">mch_trade_no,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="tradeType != null">trade_type,</if>
+            <if test="tradeStatus != null">trade_status,</if>
+            <if test="payBank != null">pay_bank,</if>
+            <if test="currencyType != null">currency_type,</if>
+            <if test="tradePayable != null">trade_payable,</if>
+            <if test="couponPrice != null">coupon_price,</if>
+            <if test="wechatRefundNo != null">wechat_refund_no,</if>
+            <if test="mchRefundNo != null">mch_refund_no,</if>
+            <if test="refundPrice != null">refund_price,</if>
+            <if test="couponRefundPrice != null">coupon_refund_price,</if>
+            <if test="refundType != null">refund_type,</if>
+            <if test="refundStatus != null">refund_status,</if>
+            <if test="goodsName != null">goods_name,</if>
+            <if test="mchDataPackage != null">mch_data_package,</if>
+            <if test="serviceFee != null">service_fee,</if>
+            <if test="serviceRate != null">service_rate,</if>
+            <if test="tradePrice != null">trade_price,</if>
+            <if test="requestRefund != null">request_refund,</if>
+            <if test="rateRemark != null">rate_remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tradeTime != null">#{tradeTime},</if>
+            <if test="mpId != null">#{mpId},</if>
+            <if test="mchId != null">#{mchId},</if>
+            <if test="vipMchId != null">#{vipMchId},</if>
+            <if test="terminalId != null">#{terminalId},</if>
+            <if test="wechatTradeNo != null">#{wechatTradeNo},</if>
+            <if test="mchTradeNo != null">#{mchTradeNo},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="tradeType != null">#{tradeType},</if>
+            <if test="tradeStatus != null">#{tradeStatus},</if>
+            <if test="payBank != null">#{payBank},</if>
+            <if test="currencyType != null">#{currencyType},</if>
+            <if test="tradePayable != null">#{tradePayable},</if>
+            <if test="couponPrice != null">#{couponPrice},</if>
+            <if test="wechatRefundNo != null">#{wechatRefundNo},</if>
+            <if test="mchRefundNo != null">#{mchRefundNo},</if>
+            <if test="refundPrice != null">#{refundPrice},</if>
+            <if test="couponRefundPrice != null">#{couponRefundPrice},</if>
+            <if test="refundType != null">#{refundType},</if>
+            <if test="refundStatus != null">#{refundStatus},</if>
+            <if test="goodsName != null">#{goodsName},</if>
+            <if test="mchDataPackage != null">#{mchDataPackage},</if>
+            <if test="serviceFee != null">#{serviceFee},</if>
+            <if test="serviceRate != null">#{serviceRate},</if>
+            <if test="tradePrice != null">#{tradePrice},</if>
+            <if test="requestRefund != null">#{requestRefund},</if>
+            <if test="rateRemark != null">#{rateRemark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateWechatTrade" parameterType="WechatTrade">
+        update wechat_trade
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tradeTime != null">trade_time = #{tradeTime},</if>
+            <if test="mpId != null">mp_id = #{mpId},</if>
+            <if test="mchId != null">mch_id = #{mchId},</if>
+            <if test="vipMchId != null">vip_mch_id = #{vipMchId},</if>
+            <if test="terminalId != null">terminal_id = #{terminalId},</if>
+            <if test="wechatTradeNo != null">wechat_trade_no = #{wechatTradeNo},</if>
+            <if test="mchTradeNo != null">mch_trade_no = #{mchTradeNo},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="tradeType != null">trade_type = #{tradeType},</if>
+            <if test="tradeStatus != null">trade_status = #{tradeStatus},</if>
+            <if test="payBank != null">pay_bank = #{payBank},</if>
+            <if test="currencyType != null">currency_type = #{currencyType},</if>
+            <if test="tradePayable != null">trade_payable = #{tradePayable},</if>
+            <if test="couponPrice != null">coupon_price = #{couponPrice},</if>
+            <if test="wechatRefundNo != null">wechat_refund_no = #{wechatRefundNo},</if>
+            <if test="mchRefundNo != null">mch_refund_no = #{mchRefundNo},</if>
+            <if test="refundPrice != null">refund_price = #{refundPrice},</if>
+            <if test="couponRefundPrice != null">coupon_refund_price = #{couponRefundPrice},</if>
+            <if test="refundType != null">refund_type = #{refundType},</if>
+            <if test="refundStatus != null">refund_status = #{refundStatus},</if>
+            <if test="goodsName != null">goods_name = #{goodsName},</if>
+            <if test="mchDataPackage != null">mch_data_package = #{mchDataPackage},</if>
+            <if test="serviceFee != null">service_fee = #{serviceFee},</if>
+            <if test="serviceRate != null">service_rate = #{serviceRate},</if>
+            <if test="tradePrice != null">trade_price = #{tradePrice},</if>
+            <if test="requestRefund != null">request_refund = #{requestRefund},</if>
+            <if test="rateRemark != null">rate_remark = #{rateRemark},</if>
+        </trim>
+        where column_id = #{columnId}
+    </update>
+
+    <delete id="deleteWechatTradeByColumnId" parameterType="Long">
+        delete from wechat_trade where column_id = #{columnId}
+    </delete>
+
+    <delete id="deleteWechatTradeByColumnIds" parameterType="String">
+        delete from wechat_trade where column_id in 
+        <foreach item="columnId" collection="array" open="(" separator="," close=")">
+            #{columnId}
+        </foreach>
+    </delete>
+</mapper>

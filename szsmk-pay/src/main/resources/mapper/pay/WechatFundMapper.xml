@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.pay.mapper.WechatFundMapper">
+    
+    <resultMap type="WechatFund" id="WechatFundResult">
+        <result property="columnId"    column="column_id"    />
+        <result property="recordTime"    column="record_time"    />
+        <result property="wechatTradeNo"    column="wechat_trade_no"    />
+        <result property="mchId"    column="mch_id"    />
+        <result property="fundNo"    column="fund_no"    />
+        <result property="tradeName"    column="trade_name"    />
+        <result property="tradeType"    column="trade_type"    />
+        <result property="inOutType"    column="in_out_type"    />
+        <result property="fundPrice"    column="fund_price"    />
+        <result property="accountBalance"    column="account_balance"    />
+        <result property="fundUser"    column="fund_user"    />
+        <result property="remark"    column="remark"    />
+        <result property="voucherNo"    column="voucher_no"    />
+    </resultMap>
+
+    <sql id="selectWechatFundVo">
+        select column_id, record_time, wechat_trade_no,mch_id, fund_no, trade_name, trade_type, in_out_type, fund_price, account_balance, fund_user, remark, voucher_no from wechat_fund
+    </sql>
+
+    <select id="selectWechatFundList" parameterType="WechatFund" resultMap="WechatFundResult">
+        <include refid="selectWechatFundVo"/>
+        <where>  
+            <if test="recordTime != null "> and date(record_time) = #{recordTime}</if>
+            <if test="wechatTradeNo != null  and wechatTradeNo != ''"> and wechat_trade_no = #{wechatTradeNo}</if>
+            <if test="mchId != null  and mchId != ''"> and mch_id = #{mchId}</if>
+            <if test="fundNo != null  and fundNo != ''"> and fund_no = #{fundNo}</if>
+            <if test="tradeName != null  and tradeName != ''"> and trade_name like concat('%', #{tradeName}, '%')</if>
+            <if test="tradeType != null  and tradeType != ''"> and trade_type = #{tradeType}</if>
+            <if test="inOutType != null  and inOutType != ''"> and in_out_type = #{inOutType}</if>
+            <if test="fundPrice != null "> and fund_price = #{fundPrice}</if>
+            <if test="accountBalance != null "> and account_balance = #{accountBalance}</if>
+            <if test="fundUser != null  and fundUser != ''"> and fund_user = #{fundUser}</if>
+            <if test="voucherNo != null  and voucherNo != ''"> and voucher_no = #{voucherNo}</if>
+        </where>
+    </select>
+    
+    <select id="selectWechatFundByColumnId" parameterType="Long" resultMap="WechatFundResult">
+        <include refid="selectWechatFundVo"/>
+        where column_id = #{columnId}
+    </select>
+        
+    <insert id="insertWechatFund" parameterType="WechatFund" useGeneratedKeys="true" keyProperty="columnId">
+        insert into wechat_fund
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recordTime != null">record_time,</if>
+            <if test="wechatTradeNo != null">wechat_trade_no,</if>
+            <if test="mchId != null">mch_id,</if>
+            <if test="fundNo != null">fund_no,</if>
+            <if test="tradeName != null">trade_name,</if>
+            <if test="tradeType != null">trade_type,</if>
+            <if test="inOutType != null">in_out_type,</if>
+            <if test="fundPrice != null">fund_price,</if>
+            <if test="accountBalance != null">account_balance,</if>
+            <if test="fundUser != null">fund_user,</if>
+            <if test="remark != null">remark,</if>
+            <if test="voucherNo != null">voucher_no,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="recordTime != null">#{recordTime},</if>
+            <if test="wechatTradeNo != null">#{wechatTradeNo},</if>
+            <if test="mchId != null">#{mchId},</if>
+            <if test="fundNo != null">#{fundNo},</if>
+            <if test="tradeName != null">#{tradeName},</if>
+            <if test="tradeType != null">#{tradeType},</if>
+            <if test="inOutType != null">#{inOutType},</if>
+            <if test="fundPrice != null">#{fundPrice},</if>
+            <if test="accountBalance != null">#{accountBalance},</if>
+            <if test="fundUser != null">#{fundUser},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="voucherNo != null">#{voucherNo},</if>
+         </trim>
+    </insert>
+
+    <update id="updateWechatFund" parameterType="WechatFund">
+        update wechat_fund
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="recordTime != null">record_time = #{recordTime},</if>
+            <if test="wechatTradeNo != null">wechat_trade_no = #{wechatTradeNo},</if>
+            <if test="mchId != null">mch_id = #{mchId},</if>
+            <if test="fundNo != null">fund_no = #{fundNo},</if>
+            <if test="tradeName != null">trade_name = #{tradeName},</if>
+            <if test="tradeType != null">trade_type = #{tradeType},</if>
+            <if test="inOutType != null">in_out_type = #{inOutType},</if>
+            <if test="fundPrice != null">fund_price = #{fundPrice},</if>
+            <if test="accountBalance != null">account_balance = #{accountBalance},</if>
+            <if test="fundUser != null">fund_user = #{fundUser},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="voucherNo != null">voucher_no = #{voucherNo},</if>
+        </trim>
+        where column_id = #{columnId}
+    </update>
+
+    <delete id="deleteWechatFundByColumnId" parameterType="Long">
+        delete from wechat_fund where column_id = #{columnId}
+    </delete>
+
+    <delete id="deleteWechatFundByColumnIds" parameterType="String">
+        delete from wechat_fund where column_id in 
+        <foreach item="columnId" collection="array" open="(" separator="," close=")">
+            #{columnId}
+        </foreach>
+    </delete>
+</mapper>

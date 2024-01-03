@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.pay.mapper.AlipayFundSumMapper">
+    
+    <resultMap type="AlipayFundSum" id="AlipayFundSumResult">
+        <result property="columnId"    column="column_id"    />
+        <result property="mchId"      column="mch_id" />
+        <result property="fundDate"    column="fund_date"    />
+        <result property="retailNo"    column="retail_no"    />
+        <result property="retailName"    column="retail_name"    />
+        <result property="tradeNoSum"    column="trade_no_sum"    />
+        <result property="refundNoSum"    column="refund_no_sum"    />
+        <result property="tradePriceSum"    column="trade_price_sum"    />
+        <result property="merRealSum"    column="mer_real_sum"    />
+        <result property="alipayCouponSum"    column="alipay_coupon_sum"    />
+        <result property="merCouponSum"    column="mer_coupon_sum"    />
+        <result property="cardPriceSum"    column="card_price_sum"    />
+        <result property="serviceFeeSum"    column="service_fee_sum"    />
+        <result property="profitSum"    column="profit_sum"    />
+        <result property="realIncomeSum"    column="real_income_sum"    />
+    </resultMap>
+
+    <sql id="selectAlipayFundSumVo">
+        select column_id, mch_id,fund_date, retail_no, retail_name, trade_no_sum, refund_no_sum, trade_price_sum, mer_real_sum, alipay_coupon_sum, mer_coupon_sum, card_price_sum, service_fee_sum, profit_sum, real_income_sum from alipay_fund_sum
+    </sql>
+
+    <select id="selectAlipayFundSumList" parameterType="AlipayFundSum" resultMap="AlipayFundSumResult">
+        <include refid="selectAlipayFundSumVo"/>
+        <where>  
+            <if test="fundDate != null "> and fund_date = #{fundDate}</if>
+            <if test="mchId != null "> and mch_id = #{mchId} </if>
+            <if test="retailNo != null  and retailNo != ''"> and retail_no = #{retailNo}</if>
+            <if test="retailName != null  and retailName != ''"> and retail_name like concat('%', #{retailName}, '%')</if>
+            <if test="tradeNoSum != null "> and trade_no_sum = #{tradeNoSum}</if>
+            <if test="refundNoSum != null "> and refund_no_sum = #{refundNoSum}</if>
+            <if test="tradePriceSum != null "> and trade_price_sum = #{tradePriceSum}</if>
+            <if test="merRealSum != null "> and mer_real_sum = #{merRealSum}</if>
+            <if test="alipayCouponSum != null "> and alipay_coupon_sum = #{alipayCouponSum}</if>
+            <if test="merCouponSum != null "> and mer_coupon_sum = #{merCouponSum}</if>
+            <if test="cardPriceSum != null "> and card_price_sum = #{cardPriceSum}</if>
+            <if test="serviceFeeSum != null "> and service_fee_sum = #{serviceFeeSum}</if>
+            <if test="profitSum != null "> and profit_sum = #{profitSum}</if>
+            <if test="realIncomeSum != null "> and real_income_sum = #{realIncomeSum}</if>
+        </where>
+    </select>
+    
+    <select id="selectAlipayFundSumByColumnId" parameterType="Long" resultMap="AlipayFundSumResult">
+        <include refid="selectAlipayFundSumVo"/>
+        where column_id = #{columnId}
+    </select>
+        
+    <insert id="insertAlipayFundSum" parameterType="AlipayFundSum" useGeneratedKeys="true" keyProperty="columnId">
+        insert into alipay_fund_sum
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fundDate != null">fund_date,</if>
+            <if test="mchId != null">mch_id,</if>
+            <if test="retailNo != null">retail_no,</if>
+            <if test="retailName != null">retail_name,</if>
+            <if test="tradeNoSum != null">trade_no_sum,</if>
+            <if test="refundNoSum != null">refund_no_sum,</if>
+            <if test="tradePriceSum != null">trade_price_sum,</if>
+            <if test="merRealSum != null">mer_real_sum,</if>
+            <if test="alipayCouponSum != null">alipay_coupon_sum,</if>
+            <if test="merCouponSum != null">mer_coupon_sum,</if>
+            <if test="cardPriceSum != null">card_price_sum,</if>
+            <if test="serviceFeeSum != null">service_fee_sum,</if>
+            <if test="profitSum != null">profit_sum,</if>
+            <if test="realIncomeSum != null">real_income_sum,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fundDate != null">#{fundDate},</if>
+            <if test="mchId != null">#{mchId},</if>
+            <if test="retailNo != null">#{retailNo},</if>
+            <if test="retailName != null">#{retailName},</if>
+            <if test="tradeNoSum != null">#{tradeNoSum},</if>
+            <if test="refundNoSum != null">#{refundNoSum},</if>
+            <if test="tradePriceSum != null">#{tradePriceSum},</if>
+            <if test="merRealSum != null">#{merRealSum},</if>
+            <if test="alipayCouponSum != null">#{alipayCouponSum},</if>
+            <if test="merCouponSum != null">#{merCouponSum},</if>
+            <if test="cardPriceSum != null">#{cardPriceSum},</if>
+            <if test="serviceFeeSum != null">#{serviceFeeSum},</if>
+            <if test="profitSum != null">#{profitSum},</if>
+            <if test="realIncomeSum != null">#{realIncomeSum},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAlipayFundSum" parameterType="AlipayFundSum">
+        update alipay_fund_sum
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="fundDate != null">fund_date = #{fundDate},</if>
+            <if test="mchId != null">mch_id = #{mchId},</if>
+            <if test="retailNo != null">retail_no = #{retailNo},</if>
+            <if test="retailName != null">retail_name = #{retailName},</if>
+            <if test="tradeNoSum != null">trade_no_sum = #{tradeNoSum},</if>
+            <if test="refundNoSum != null">refund_no_sum = #{refundNoSum},</if>
+            <if test="tradePriceSum != null">trade_price_sum = #{tradePriceSum},</if>
+            <if test="merRealSum != null">mer_real_sum = #{merRealSum},</if>
+            <if test="alipayCouponSum != null">alipay_coupon_sum = #{alipayCouponSum},</if>
+            <if test="merCouponSum != null">mer_coupon_sum = #{merCouponSum},</if>
+            <if test="cardPriceSum != null">card_price_sum = #{cardPriceSum},</if>
+            <if test="serviceFeeSum != null">service_fee_sum = #{serviceFeeSum},</if>
+            <if test="profitSum != null">profit_sum = #{profitSum},</if>
+            <if test="realIncomeSum != null">real_income_sum = #{realIncomeSum},</if>
+        </trim>
+        where column_id = #{columnId}
+    </update>
+
+    <delete id="deleteAlipayFundSumByColumnId" parameterType="Long">
+        delete from alipay_fund_sum where column_id = #{columnId}
+    </delete>
+
+    <delete id="deleteAlipayFundSumByColumnIds" parameterType="String">
+        delete from alipay_fund_sum where column_id in 
+        <foreach item="columnId" collection="array" open="(" separator="," close=")">
+            #{columnId}
+        </foreach>
+    </delete>
+</mapper>

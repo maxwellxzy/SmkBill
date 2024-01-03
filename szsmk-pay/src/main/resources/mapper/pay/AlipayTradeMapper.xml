@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.pay.mapper.AlipayTradeMapper">
+    
+    <resultMap type="AlipayTrade" id="AlipayTradeResult">
+        <result property="columnId"    column="column_id"    />
+        <result property="alipayTradeNo"    column="alipay_trade_no"    />
+        <result property="mchId"    column="mch_id"    />
+        <result property="merTradeNo"    column="mer_trade_no"    />
+        <result property="tradeType"    column="trade_type"    />
+        <result property="goodsName"    column="goods_name"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="completeTime"    column="complete_time"    />
+        <result property="retailNo"    column="retail_no"    />
+        <result property="retailName"    column="retail_name"    />
+        <result property="operator"    column="operator"    />
+        <result property="terminalNo"    column="terminal_no"    />
+        <result property="userAccount"    column="user_account"    />
+        <result property="orderPrice"    column="order_price"    />
+        <result property="realPrice"    column="real_price"    />
+        <result property="alipayRedpocket"    column="alipay_redpocket"    />
+        <result property="jifenbao"    column="jifenbao"    />
+        <result property="alipayCoupon"    column="alipay_coupon"    />
+        <result property="merCoupon"    column="mer_coupon"    />
+        <result property="couponCompletePrice"    column="coupon_complete_price"    />
+        <result property="couponName"    column="coupon_name"    />
+        <result property="merRedpocketComsume"    column="mer_redpocket_comsume"    />
+        <result property="cardConsume"    column="card_consume"    />
+        <result property="refundNo"    column="refund_no"    />
+        <result property="serviceFee"    column="service_fee"    />
+        <result property="profit"    column="profit"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectAlipayTradeVo">
+        select column_id, alipay_trade_no, mch_id,mer_trade_no, trade_type, goods_name, create_time, complete_time, retail_no, retail_name, operator, terminal_no, user_account, order_price, real_price, alipay_redpocket, jifenbao, alipay_coupon, mer_coupon, coupon_complete_price, coupon_name, mer_redpocket_comsume, card_consume, refund_no, service_fee, profit, remark from alipay_trade
+    </sql>
+
+    <select id="selectAlipayTradeList" parameterType="AlipayTrade" resultMap="AlipayTradeResult">
+        <include refid="selectAlipayTradeVo"/>
+        <where>  
+            <if test="alipayTradeNo != null  and alipayTradeNo != ''"> and alipay_trade_no = #{alipayTradeNo}</if>
+            <if test="mchId != null  and mchId != ''"> and mch_id = #{mchId}</if>
+            <if test="merTradeNo != null  and merTradeNo != ''"> and mer_trade_no like concat(#{merTradeNo}, '%')</if>
+            <if test="tradeType != null  and tradeType != ''"> and trade_type = #{tradeType}</if>
+            <if test="goodsName != null  and goodsName != ''"> and goods_name like concat('%', #{goodsName}, '%')</if>
+            <if test="completeTime != null "> and date(complete_time) = #{completeTime}</if>
+            <if test="retailNo != null  and retailNo != ''"> and retail_no = #{retailNo}</if>
+            <if test="retailName != null  and retailName != ''"> and retail_name like concat('%', #{retailName}, '%')</if>
+            <if test="operator != null  and operator != ''"> and operator = #{operator}</if>
+            <if test="terminalNo != null  and terminalNo != ''"> and terminal_no = #{terminalNo}</if>
+            <if test="userAccount != null  and userAccount != ''"> and user_account = #{userAccount}</if>
+            <if test="orderPrice != null "> and order_price = #{orderPrice}</if>
+            <if test="realPrice != null "> and real_price = #{realPrice}</if>
+            <if test="alipayRedpocket != null "> and alipay_redpocket = #{alipayRedpocket}</if>
+            <if test="jifenbao != null "> and jifenbao = #{jifenbao}</if>
+            <if test="alipayCoupon != null "> and alipay_coupon = #{alipayCoupon}</if>
+            <if test="merCoupon != null "> and mer_coupon = #{merCoupon}</if>
+            <if test="couponCompletePrice != null "> and coupon_complete_price = #{couponCompletePrice}</if>
+            <if test="couponName != null  and couponName != ''"> and coupon_name like concat('%', #{couponName}, '%')</if>
+            <if test="merRedpocketComsume != null "> and mer_redpocket_comsume = #{merRedpocketComsume}</if>
+            <if test="cardConsume != null "> and card_consume = #{cardConsume}</if>
+            <if test="refundNo != null  and refundNo != ''"> and refund_no = #{refundNo}</if>
+            <if test="serviceFee != null "> and service_fee = #{serviceFee}</if>
+            <if test="profit != null "> and profit = #{profit}</if>
+        </where>
+    </select>
+
+
+
+    <select id="selectAlipayTradeByColumnId" parameterType="Long" resultMap="AlipayTradeResult">
+        <include refid="selectAlipayTradeVo"/>
+        where column_id = #{columnId}
+    </select>
+        
+    <insert id="insertAlipayTrade" parameterType="AlipayTrade" useGeneratedKeys="true" keyProperty="columnId">
+        insert into alipay_trade
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="alipayTradeNo != null">alipay_trade_no,</if>
+            <if test="mchId != null">mch_id,</if>
+            <if test="merTradeNo != null">mer_trade_no,</if>
+            <if test="tradeType != null">trade_type,</if>
+            <if test="goodsName != null">goods_name,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="completeTime != null">complete_time,</if>
+            <if test="retailNo != null">retail_no,</if>
+            <if test="retailName != null">retail_name,</if>
+            <if test="operator != null">operator,</if>
+            <if test="terminalNo != null">terminal_no,</if>
+            <if test="userAccount != null">user_account,</if>
+            <if test="orderPrice != null">order_price,</if>
+            <if test="realPrice != null">real_price,</if>
+            <if test="alipayRedpocket != null">alipay_redpocket,</if>
+            <if test="jifenbao != null">jifenbao,</if>
+            <if test="alipayCoupon != null">alipay_coupon,</if>
+            <if test="merCoupon != null">mer_coupon,</if>
+            <if test="couponCompletePrice != null">coupon_complete_price,</if>
+            <if test="couponName != null">coupon_name,</if>
+            <if test="merRedpocketComsume != null">mer_redpocket_comsume,</if>
+            <if test="cardConsume != null">card_consume,</if>
+            <if test="refundNo != null">refund_no,</if>
+            <if test="serviceFee != null">service_fee,</if>
+            <if test="profit != null">profit,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="alipayTradeNo != null">#{alipayTradeNo},</if>
+            <if test="mchId != null">#{mchId},</if>
+            <if test="merTradeNo != null">#{merTradeNo},</if>
+            <if test="tradeType != null">#{tradeType},</if>
+            <if test="goodsName != null">#{goodsName},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="completeTime != null">#{completeTime},</if>
+            <if test="retailNo != null">#{retailNo},</if>
+            <if test="retailName != null">#{retailName},</if>
+            <if test="operator != null">#{operator},</if>
+            <if test="terminalNo != null">#{terminalNo},</if>
+            <if test="userAccount != null">#{userAccount},</if>
+            <if test="orderPrice != null">#{orderPrice},</if>
+            <if test="realPrice != null">#{realPrice},</if>
+            <if test="alipayRedpocket != null">#{alipayRedpocket},</if>
+            <if test="jifenbao != null">#{jifenbao},</if>
+            <if test="alipayCoupon != null">#{alipayCoupon},</if>
+            <if test="merCoupon != null">#{merCoupon},</if>
+            <if test="couponCompletePrice != null">#{couponCompletePrice},</if>
+            <if test="couponName != null">#{couponName},</if>
+            <if test="merRedpocketComsume != null">#{merRedpocketComsume},</if>
+            <if test="cardConsume != null">#{cardConsume},</if>
+            <if test="refundNo != null">#{refundNo},</if>
+            <if test="serviceFee != null">#{serviceFee},</if>
+            <if test="profit != null">#{profit},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAlipayTrade" parameterType="AlipayTrade">
+        update alipay_trade
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="alipayTradeNo != null">alipay_trade_no = #{alipayTradeNo},</if>
+            <if test="mchId != null">mch_id = #{mchId},</if>
+            <if test="merTradeNo != null">mer_trade_no = #{merTradeNo},</if>
+            <if test="tradeType != null">trade_type = #{tradeType},</if>
+            <if test="goodsName != null">goods_name = #{goodsName},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="completeTime != null">complete_time = #{completeTime},</if>
+            <if test="retailNo != null">retail_no = #{retailNo},</if>
+            <if test="retailName != null">retail_name = #{retailName},</if>
+            <if test="operator != null">operator = #{operator},</if>
+            <if test="terminalNo != null">terminal_no = #{terminalNo},</if>
+            <if test="userAccount != null">user_account = #{userAccount},</if>
+            <if test="orderPrice != null">order_price = #{orderPrice},</if>
+            <if test="realPrice != null">real_price = #{realPrice},</if>
+            <if test="alipayRedpocket != null">alipay_redpocket = #{alipayRedpocket},</if>
+            <if test="jifenbao != null">jifenbao = #{jifenbao},</if>
+            <if test="alipayCoupon != null">alipay_coupon = #{alipayCoupon},</if>
+            <if test="merCoupon != null">mer_coupon = #{merCoupon},</if>
+            <if test="couponCompletePrice != null">coupon_complete_price = #{couponCompletePrice},</if>
+            <if test="couponName != null">coupon_name = #{couponName},</if>
+            <if test="merRedpocketComsume != null">mer_redpocket_comsume = #{merRedpocketComsume},</if>
+            <if test="cardConsume != null">card_consume = #{cardConsume},</if>
+            <if test="refundNo != null">refund_no = #{refundNo},</if>
+            <if test="serviceFee != null">service_fee = #{serviceFee},</if>
+            <if test="profit != null">profit = #{profit},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where column_id = #{columnId}
+    </update>
+
+    <delete id="deleteAlipayTradeByColumnId" parameterType="Long">
+        delete from alipay_trade where column_id = #{columnId}
+    </delete>
+
+    <delete id="deleteAlipayTradeByColumnIds" parameterType="String">
+        delete from alipay_trade where column_id in 
+        <foreach item="columnId" collection="array" open="(" separator="," close=")">
+            #{columnId}
+        </foreach>
+    </delete>
+</mapper>

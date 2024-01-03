@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.pay.mapper.PayTradeSumMapper">
+    
+    <resultMap type="PayTradeSum" id="PayTradeSumResult">
+        <result property="id"    column="id"    />
+        <result property="mchId"    column="mch_id"    />
+        <result property="recordTime"    column="record_time"    />
+        <result property="tradeName"    column="trade_name"    />
+        <result property="tradePrice"    column="trade_price"    />
+        <result property="refundPrice"    column="refund_price"    />
+        <result property="serviceFee"    column="service_fee"    />
+        <result property="realPrice"    column="real_price"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectPayTradeSumVo">
+        select id, mch_id, record_time, trade_name, trade_price, refund_price, service_fee, real_price, remark from pay_trade_sum
+    </sql>
+
+    <select id="selectPayTradeSumList" parameterType="PayTradeSum" resultMap="PayTradeSumResult">
+        <include refid="selectPayTradeSumVo"/>
+        <where>  
+            <if test="mchId != null  and mchId != ''"> and mch_id = #{mchId}</if>
+            <if test="recordTime != null "> and record_time = #{recordTime}</if>
+            <if test="tradeName != null  and tradeName != ''"> and trade_name like concat('%', #{tradeName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectPayTradeSumById" parameterType="Long" resultMap="PayTradeSumResult">
+        <include refid="selectPayTradeSumVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertPayTradeSum" parameterType="PayTradeSum" useGeneratedKeys="true" keyProperty="id">
+        insert into pay_trade_sum
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="mchId != null">mch_id,</if>
+            <if test="recordTime != null">record_time,</if>
+            <if test="tradeName != null">trade_name,</if>
+            <if test="tradePrice != null">trade_price,</if>
+            <if test="refundPrice != null">refund_price,</if>
+            <if test="serviceFee != null">service_fee,</if>
+            <if test="realPrice != null">real_price,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="mchId != null">#{mchId},</if>
+            <if test="recordTime != null">#{recordTime},</if>
+            <if test="tradeName != null">#{tradeName},</if>
+            <if test="tradePrice != null">#{tradePrice},</if>
+            <if test="refundPrice != null">#{refundPrice},</if>
+            <if test="serviceFee != null">#{serviceFee},</if>
+            <if test="realPrice != null">#{realPrice},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePayTradeSum" parameterType="PayTradeSum">
+        update pay_trade_sum
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="mchId != null">mch_id = #{mchId},</if>
+            <if test="recordTime != null">record_time = #{recordTime},</if>
+            <if test="tradeName != null">trade_name = #{tradeName},</if>
+            <if test="tradePrice != null">trade_price = #{tradePrice},</if>
+            <if test="refundPrice != null">refund_price = #{refundPrice},</if>
+            <if test="serviceFee != null">service_fee = #{serviceFee},</if>
+            <if test="realPrice != null">real_price = #{realPrice},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePayTradeSumById" parameterType="Long">
+        delete from pay_trade_sum where id = #{id}
+    </delete>
+
+    <delete id="deletePayTradeSumByIds" parameterType="String">
+        delete from pay_trade_sum where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
