@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.pay.mapper.GoodsNameMapper">
+    
+    <resultMap type="GoodsName" id="GoodsNameResult">
+        <result property="id"    column="id"    />
+        <result property="goodsNum"    column="goods_num"    />
+        <result property="goodsName"    column="goods_name"    />
+        <result property="goodsRemark"    column="goods_remark"    />
+        <result property="status"    column="status"    />
+    </resultMap>
+
+    <sql id="selectGoodsNameVo">
+        select id, goods_num, goods_name, goods_remark, status from goods_name
+    </sql>
+
+    <select id="selectGoodsNameList" parameterType="GoodsName" resultMap="GoodsNameResult">
+        <include refid="selectGoodsNameVo"/>
+        <where>  
+            <if test="goodsNum != null  and goodsNum != ''"> and goods_num = #{goodsNum}</if>
+            <if test="goodsName != null  and goodsName != ''"> and goods_name like concat('%', #{goodsName}, '%')</if>
+            <if test="goodsRemark != null  and goodsRemark != ''"> and goods_remark = #{goodsRemark}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectGoodsNameById" parameterType="Long" resultMap="GoodsNameResult">
+        <include refid="selectGoodsNameVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertGoodsName" parameterType="GoodsName" useGeneratedKeys="true" keyProperty="id">
+        insert into goods_name
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="goodsNum != null">goods_num,</if>
+            <if test="goodsName != null">goods_name,</if>
+            <if test="goodsRemark != null">goods_remark,</if>
+            <if test="status != null">status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="goodsNum != null">#{goodsNum},</if>
+            <if test="goodsName != null">#{goodsName},</if>
+            <if test="goodsRemark != null">#{goodsRemark},</if>
+            <if test="status != null">#{status},</if>
+         </trim>
+    </insert>
+
+    <update id="updateGoodsName" parameterType="GoodsName">
+        update goods_name
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="goodsNum != null">goods_num = #{goodsNum},</if>
+            <if test="goodsName != null">goods_name = #{goodsName},</if>
+            <if test="goodsRemark != null">goods_remark = #{goodsRemark},</if>
+            <if test="status != null">status = #{status},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteGoodsNameById" parameterType="Long">
+        delete from goods_name where id = #{id}
+    </delete>
+
+    <delete id="deleteGoodsNameByIds" parameterType="String">
+        delete from goods_name where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

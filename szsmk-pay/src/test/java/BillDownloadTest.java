@@ -18,6 +18,7 @@ public class BillDownloadTest {
     String certPath = "/var/pay/cert/";
     WechatMch wechatMch = new WechatMch(
         "1507955111",
+//        "",
         "/var/pay/cert/wechat_1507955111/apiclient_key.pem",
         "756F9AC86A73203F7284EF859A31565890C291B7",
         "u8N7d5F0P8n6G4X1lIj70M1k7uBczP42",

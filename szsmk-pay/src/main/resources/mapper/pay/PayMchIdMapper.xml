@@ -8,6 +8,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="id"    column="id"    />
         <result property="mchType"    column="mch_type"    />
         <result property="mchId"    column="mch_id"    />
+        <result property="status"    column="status"    />
         <result property="mchName"    column="mch_name"    />
         <result property="apiKey"    column="api_key"    />
         <result property="snKey"    column="sn_key"    />
@@ -15,14 +16,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="alipayCertPath"    column="alipay_cert_path"    />
         <result property="alipayappPrivatePath"    column="alipayapp_private_path"    />
         <result property="alipayappPublicPath"    column="alipayapp_public_path"    />
-        <result property="alipayRootPath"         column="alipay_root_path" />
+        <result property="alipayRootPath"    column="alipay_root_path"    />
         <result property="b1Key"    column="b1_key"    />
         <result property="b2Key"    column="b2_key"    />
         <result property="remark"    column="remark"    />
     </resultMap>
 
     <sql id="selectPayMchIdVo">
-        select id, mch_type, mch_id, mch_name, api_key, sn_key, wechat_api_cert, alipay_cert_path, alipayapp_private_path, alipayapp_public_path, alipay_root_path,b1_key, b2_key, remark from pay_mch_id
+        select id, mch_type, mch_id, status, mch_name, api_key, sn_key, wechat_api_cert, alipay_cert_path, alipayapp_private_path, alipayapp_public_path, alipay_root_path, b1_key, b2_key, remark from pay_mch_id
     </sql>
 
     <select id="selectPayMchIdList" parameterType="PayMchId" resultMap="PayMchIdResult">
@@ -30,6 +31,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>  
             <if test="mchType != null  and mchType != ''"> and mch_type = #{mchType}</if>
             <if test="mchId != null  and mchId != ''"> and mch_id = #{mchId}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
             <if test="mchName != null  and mchName != ''"> and mch_name like concat('%', #{mchName}, '%')</if>
         </where>
     </select>
@@ -44,6 +46,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="mchType != null">mch_type,</if>
             <if test="mchId != null">mch_id,</if>
+            <if test="status != null">status,</if>
             <if test="mchName != null">mch_name,</if>
             <if test="apiKey != null">api_key,</if>
             <if test="snKey != null">sn_key,</if>
@@ -59,6 +62,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="mchType != null">#{mchType},</if>
             <if test="mchId != null">#{mchId},</if>
+            <if test="status != null">#{status},</if>
             <if test="mchName != null">#{mchName},</if>
             <if test="apiKey != null">#{apiKey},</if>
             <if test="snKey != null">#{snKey},</if>
@@ -78,6 +82,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="SET" suffixOverrides=",">
             <if test="mchType != null">mch_type = #{mchType},</if>
             <if test="mchId != null">mch_id = #{mchId},</if>
+            <if test="status != null">status = #{status},</if>
             <if test="mchName != null">mch_name = #{mchName},</if>
             <if test="apiKey != null">api_key = #{apiKey},</if>
             <if test="snKey != null">sn_key = #{snKey},</if>
@@ -86,7 +91,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="alipayappPrivatePath != null">alipayapp_private_path = #{alipayappPrivatePath},</if>
             <if test="alipayappPublicPath != null">alipayapp_public_path = #{alipayappPublicPath},</if>
             <if test="alipayRootPath != null">alipay_root_path = #{alipayRootPath},</if>
-
             <if test="b1Key != null">b1_key = #{b1Key},</if>
             <if test="b2Key != null">b2_key = #{b2Key},</if>
             <if test="remark != null">remark = #{remark},</if>

@@ -24,6 +24,7 @@ import java.nio.file.Paths;
 public class WechatMch {
     /** 商户号 */
     private   String merchantId;
+//    private String subMchId;
     /** 商户API私钥路径 */
     private String privateKeyPath;
     /** 商户证书序列号 */
@@ -36,13 +37,15 @@ public class WechatMch {
     /**订单路径*/
     private String savePath;
 
-    public WechatMch(String merchantId, String privateKeyPath, String merchantSerialNumber, String apiV3Key, String billDate, String savePath) {
+    public WechatMch(String merchantId, /*String subMchId,*/String privateKeyPath, String merchantSerialNumber, String apiV3Key, String billDate, String savePath) {
         this.merchantId = merchantId;
+ //       this.subMchId = subMchId;
         this.privateKeyPath = privateKeyPath;
         this.merchantSerialNumber = merchantSerialNumber;
         this.apiV3Key = apiV3Key;
         this.billDate = billDate;
         this.savePath = savePath + "wechat/";
+
     }
     public  WechatMch(String merchantId, String certPath,String downloadPath){
         this.merchantId = merchantId;
@@ -105,7 +108,7 @@ public class WechatMch {
     public boolean downloadFundBill(String billDate,String savePath){
         GetFundFlowBillRequest request = new GetFundFlowBillRequest();
         request.setBillDate(billDate);
-        request.setAccountType(AccountType.ALL);
+        request.setAccountType(AccountType.BASIC);
         request.setTarType(TarType.GZIP);
         BillDownloadServiceExtension billDownloadServiceExtension = configBill();
         DigestBillEntity bill = billDownloadServiceExtension.getFundFlowBill(request);
@@ -188,6 +191,7 @@ public class WechatMch {
         request.setBillDate(billDate);
         request.setBillType(BillType.ALL);
         request.setTarType(TarType.GZIP);
+ //       request.setSubMchid(this.subMchId);
         BillDownloadServiceExtension billDownloadServiceExtension = configBill();
         DigestBillEntity bill = billDownloadServiceExtension.getTradeBill(request);
         String filePath = savePath + this.merchantId + "_" + billDate.replaceAll("-","") + "_trade.csv";

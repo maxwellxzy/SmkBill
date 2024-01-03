@@ -32,6 +32,8 @@ public class AutoDailyWork {
     private IWechatFundService wechatFundService;
     @Autowired
     private IAlipayFundSumService   alipayFundSumService;
+    @Autowired
+    private IGoodsNameService goodsNameService;
 
 
     /**
@@ -51,7 +53,9 @@ public class AutoDailyWork {
     public void autoImport(String billDate){
         //获取PayMchId中的所有商户号及配置，根据这些配置进行设置
 
-         List<PayMchId> payMchIdList =  payMchIdService.selectPayMchIdList(new PayMchId());
+        PayMchId mchId = new PayMchId();
+        mchId.setStatus("0"); //筛选出正常的商户号
+         List<PayMchId> payMchIdList =  payMchIdService.selectPayMchIdList(mchId);
          for(PayMchId payMchId : payMchIdList){
              autoImport(payMchId.getMchType(),payMchId.getMchId(),billDate);
          }
@@ -65,7 +69,8 @@ public class AutoDailyWork {
             AjaxResult.success();
         else
             AjaxResult.error();
-        sumData(mchType,mchId,billDate);
+          sumDataGoods(mchType,mchId,billDate);
+//        sumData(mchType,mchId,billDate);
     }
 
 
@@ -101,6 +106,7 @@ public class AutoDailyWork {
         PayMchId payMchId = new PayMchId();
         payMchId.setMchType("alipay");
         payMchId.setMchId(mchId);
+        payMchId.setStatus("0");
         List<PayMchId> payMchIdList =  payMchIdService.selectPayMchIdList(payMchId);
         if(payMchIdList.size() != 1) {
             System.out.println("Error,不是唯一的mchID 或找不到mchID");
@@ -125,6 +131,7 @@ public class AutoDailyWork {
         PayMchId payMchId = new PayMchId();
         payMchId.setMchType("wechat");
         payMchId.setMchId(mchId);
+        payMchId.setStatus("0");
         List<PayMchId> payMchIdList =  payMchIdService.selectPayMchIdList(payMchId);
         if(payMchIdList.size() != 1) {
             System.out.println("Error,不是唯一的mchID 或找不到mchID");
@@ -135,6 +142,7 @@ public class AutoDailyWork {
          *  String billDate, String savePath) {*/
         payMchId = payMchIdList.getFirst();
         WechatMch wechatMch = new WechatMch(mchId,
+/*                payMchId.getB1Key(), */
                 payMchId.getWechatApiCert(),
                 payMchId.getSnKey(),
                 payMchId.getApiKey(),
@@ -189,6 +197,7 @@ public class AutoDailyWork {
 
     /**
      * insert quickly
+     * sumData:根据订单号分类，进行分类。PayTradeType
      * */
     private boolean sumData(String payType,String mchId,String date){
         Date date1;
@@ -256,6 +265,114 @@ public class AutoDailyWork {
                     //原来的减去筛选掉的：
                     alipayTradeList.removeAll(list);
                     payTradeSum.setTradeName(payTradeType.getTradeTypeName());
+                    ///
+                    List<AlipayTrade> listTrade = list.stream().filter(s->"交易".equals(s.getTradeType())).toList();
+                    List<AlipayTrade> listRefund = list.stream().filter(s->"退款".equals(s.getTradeType())).toList();
+                    //交易累加：去除退款的；
+                    payTradeSum.setTradePrice(listTrade.stream().mapToDouble(AlipayTrade::getRealPrice).sum());
+                    payTradeSum.setServiceFee(list.stream().mapToDouble(AlipayTrade::getServiceFee).sum());
+                    //退款是负的；
+                    payTradeSum.setRefundPrice(listRefund.stream().mapToDouble(AlipayTrade::getRealPrice).sum());
+                    payTradeSum.setRealPrice(list.stream().mapToDouble(AlipayTrade::getRealPrice).sum() + payTradeSum.getServiceFee());
+                    payTradeSumService.insertPayTradeSum(payTradeSum);
+
+                }
+                if(alipayTradeList.isEmpty()){
+                    return true;
+                }
+                //如果还有剩余，把剩余的都归为others其他
+                payTradeSum.setTradeName("其他");
+                List<AlipayTrade> listTrade = alipayTradeList.stream().filter(s->"交易".equals(s.getTradeType())).toList();
+                List<AlipayTrade> listRefund = alipayTradeList.stream().filter(s->"退款".equals(s.getTradeType())).toList();
+                //交易累加：去除退款的；
+                payTradeSum.setTradePrice(listTrade.stream().mapToDouble(AlipayTrade::getRealPrice).sum());
+                payTradeSum.setServiceFee(alipayTradeList.stream().mapToDouble(AlipayTrade::getServiceFee).sum());
+                //退款是负的；
+                payTradeSum.setRefundPrice(listRefund.stream().mapToDouble(AlipayTrade::getRealPrice).sum());
+                payTradeSum.setRealPrice(alipayTradeList.stream().mapToDouble(AlipayTrade::getRealPrice).sum() + payTradeSum.getServiceFee());
+                payTradeSumService.insertPayTradeSum(payTradeSum);
+                break;
+            default:
+                AjaxResult.error("没有这种支付类型：" + payType);
+                return false;
+        }
+
+        return true;
+    }
+
+
+    /**
+     * insert quickly
+     * sumDataGoods:根据商品名称进行分类，GoodsName
+     * */
+    public boolean sumDataGoods(String payType,String mchId,String date){
+        Date date1;
+        GoodsName goodsName = new GoodsName();
+        goodsName.setStatus("0");
+        List<GoodsName> goodsNameList = goodsNameService.selectGoodsNameList(goodsName);
+        try {
+            date1 = new SimpleDateFormat("yyyy-MM-dd").parse(date);
+        } catch (ParseException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+        PayTradeSum payTradeSum = new PayTradeSum();
+        switch (payType) {
+            case "wechat":
+                WechatTrade wechatTrade = new WechatTrade();
+                wechatTrade.setMchId(mchId);
+                wechatTrade.setTradeTime(date1);
+                // 先把所有list都查出来
+                List<WechatTrade> wechatTradeList = wechatTradeService.selectWechatTradeList(new WechatTrade());
+                if(wechatTradeList.isEmpty()){return true;}
+                payTradeSum.setMchId(mchId);
+                payTradeSum.setRecordTime(date1);
+                //根据每个交易类型，进行筛选
+                for(GoodsName goodsName1 : goodsNameList) {
+
+                    List<WechatTrade> list = wechatTradeList.stream()
+                            .filter(s->s.getGoodsName().trim().contains(goodsName1.getGoodsName().trim()))
+                            .toList();
+                    if(list.isEmpty()) continue;
+                    //原来的减去筛选掉的：
+                    wechatTradeList.removeAll(list);
+                    payTradeSum.setTradeName(goodsName1.getGoodsName());
+                    payTradeSum.setTradePrice(list.stream().mapToDouble(WechatTrade::getTradePrice).sum());
+                    payTradeSum.setRefundPrice(list.stream().mapToDouble(WechatTrade::getRefundPrice).sum());
+                    payTradeSum.setServiceFee(list.stream().mapToDouble(WechatTrade::getServiceFee).sum());
+                    payTradeSum.setRealPrice(payTradeSum.getTradePrice() - payTradeSum.getRefundPrice() - payTradeSum.getServiceFee());
+                    payTradeSumService.insertPayTradeSum(payTradeSum);
+                }
+                if(wechatTradeList.isEmpty()){return true;}
+                //如果还有剩余，把剩余的都归为others其他
+                payTradeSum.setTradeName("其他");
+                payTradeSum.setTradePrice(wechatTradeList.stream().mapToDouble(WechatTrade::getTradePrice).sum());
+                payTradeSum.setRefundPrice(wechatTradeList.stream().mapToDouble(WechatTrade::getRefundPrice).sum());
+                payTradeSum.setServiceFee(wechatTradeList.stream().mapToDouble(WechatTrade::getServiceFee).sum());
+                payTradeSum.setRealPrice(payTradeSum.getTradePrice() - payTradeSum.getRefundPrice() - payTradeSum.getServiceFee());
+                payTradeSumService.insertPayTradeSum(payTradeSum);
+                break;
+            case "alipay":
+                AlipayTrade alipayTrade = new AlipayTrade();
+                alipayTrade.setMchId(mchId);
+                alipayTrade.setCompleteTime(date1);
+                // 先把所有list都查出来
+                List<AlipayTrade> alipayTradeList = alipayTradeService.selectAlipayTradeList(new AlipayTrade());
+                if(alipayTradeList.isEmpty()){return true;}
+                payTradeSum.setMchId(mchId);
+                payTradeSum.setRecordTime(date1);
+                //根据每个交易类型，进行筛选
+                for(GoodsName  goodsName1 : goodsNameList) {
+                    List<AlipayTrade> list = alipayTradeList.stream()
+                            .filter(s->s.getGoodsName()
+                                    .trim()
+                                    .contains(goodsName1.getGoodsName().trim())
+                            )
+                            .toList();
+                    if(list.isEmpty()) continue;
+                    //原来的减去筛选掉的：
+                    alipayTradeList.removeAll(list);
+                    payTradeSum.setTradeName(goodsName1.getGoodsName().trim());
                     ///
                     List<AlipayTrade> listTrade = list.stream().filter(s->"交易".equals(s.getTradeType())).toList();
                     List<AlipayTrade> listRefund = list.stream().filter(s->"退款".equals(s.getTradeType())).toList();

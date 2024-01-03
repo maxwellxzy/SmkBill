@@ -19,6 +19,16 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="状态" prop="status">
+        <el-select v-model="queryParams.status" placeholder="请选择状态" clearable>
+          <el-option
+            v-for="dict in dict.type.sys_normal_disable"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="商户号名称" prop="mchName">
         <el-input
           v-model="queryParams.mchName"
@@ -88,8 +98,22 @@
         </template>
       </el-table-column>
       <el-table-column label="商户号ID" align="center" prop="mchId" />
+      <el-table-column label="状态" align="center" prop="status">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.sys_normal_disable" :value="scope.row.status"/>
+        </template>
+      </el-table-column>
       <el-table-column label="商户号名称" align="center" prop="mchName" />
-      <el-table-column label="备注" align="center" prop="remark" />
+<!--      <el-table-column label="api key" align="center" prop="apiKey" />-->
+<!--      <el-table-column label="证书序列号" align="center" prop="snKey" />-->
+<!--      <el-table-column label="微信证书路径" align="center" prop="wechatApiCert" />-->
+<!--      <el-table-column label="支付宝公钥路径" align="center" prop="alipayCertPath" />-->
+<!--      <el-table-column label="支付宝应用私钥" align="center" prop="alipayappPrivatePath" />-->
+<!--      <el-table-column label="支付宝应用公钥证书" align="center" prop="alipayappPublicPath" />-->
+<!--      <el-table-column label="alipay根证书" align="center" prop="alipayRootPath" />-->
+<!--      <el-table-column label="备用证书1" align="center" prop="b1Key" />-->
+<!--      <el-table-column label="备用证书2" align="center" prop="b2Key" />-->
+<!--      <el-table-column label="备注" align="center" prop="remark" />-->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -134,6 +158,15 @@
         <el-form-item label="商户号ID" prop="mchId">
           <el-input v-model="form.mchId" placeholder="请输入商户号ID" />
         </el-form-item>
+        <el-form-item label="状态" prop="status">
+          <el-radio-group v-model="form.status">
+            <el-radio
+              v-for="dict in dict.type.sys_normal_disable"
+              :key="dict.value"
+              :label="dict.value"
+            >{{dict.label}}</el-radio>
+          </el-radio-group>
+        </el-form-item>
         <el-form-item label="商户号名称" prop="mchName">
           <el-input v-model="form.mchName" placeholder="请输入商户号名称" />
         </el-form-item>
@@ -155,8 +188,8 @@
         <el-form-item label="支付宝应用公钥证书" prop="alipayappPublicPath">
           <el-input v-model="form.alipayappPublicPath" placeholder="请输入支付宝应用公钥证书" />
         </el-form-item>
-        <el-form-item label="支付宝根证书" prop="alipayRootPath">
-          <el-input v-model="form.alipayRootPath" placeholder="请输入支付宝根证书" />
+        <el-form-item label="alipay根证书" prop="alipayRootPath">
+          <el-input v-model="form.alipayRootPath" placeholder="请输入alipay根证书" />
         </el-form-item>
         <el-form-item label="备用证书1" prop="b1Key">
           <el-input v-model="form.b1Key" type="textarea" placeholder="请输入内容" />
@@ -181,7 +214,7 @@ import { listPaymchid, getPaymchid, delPaymchid, addPaymchid, updatePaymchid } f
 
 export default {
   name: "Paymchid",
-  dicts: ['pay_trade_type'],
+  dicts: ['pay_trade_type', 'sys_normal_disable'],
   data() {
     return {
       // 遮罩层
@@ -208,6 +241,7 @@ export default {
         pageSize: 10,
         mchType: null,
         mchId: null,
+        status: null,
         mchName: null,
       },
       // 表单参数
@@ -241,6 +275,7 @@ export default {
         id: null,
         mchType: null,
         mchId: null,
+        status: null,
         mchName: null,
         apiKey: null,
         snKey: null,
